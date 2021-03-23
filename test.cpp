@@ -13,7 +13,6 @@ int main(){
         {"sss",Json::jsonArr{1.2,2.3,"abc",true}},
         {"empty",Json()}
     };
-
-    a["key"][2]["abc"].erase("abc").erase("jbd")[2].getBool() = false;
-    a.dump();
+    Json b = "cdefg";
+    cout << b.getStr() << endl;
 }

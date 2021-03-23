@@ -8,10 +8,10 @@ namespace ccjson{
 
 class JsonVal;
 
-class Json {
+class Json final{
 public:
     enum jsonType{
-        NUL, NUMBER, BOOL, STRING, ARRAY, OBJECT
+        NUL, NUMBER, TRUE,FALSE, STRING, ARRAY, OBJECT
     };
 
     typedef std::vector<Json> jsonArr;
@@ -24,19 +24,19 @@ public:
     Json(const jsonObj &value);     //object
 
     //to string
-    virtual std::string dump();
+    std::string dump();
 
     //judge
-    bool isObj();
-    bool isNum();
-    bool isArr();
-    bool isStr();
-    bool isNull();
-    bool isTrue();
-    bool isFalse();
+    bool isObj() { return val->type() == OBJECT; }
+    bool isNum() { return val->type() == NUMBER; }
+    bool isArr() { return val->type() == ARRAY; }
+    bool isStr() { return val->type() == STRING; }
+    bool isNull() { return val->type() == NUL; }
+    bool isTrue() { return val->type() == TRUE; }
+    bool isFalse() { return val->type() == FALSE; }
 
     //access
-    jsonType Type() const;
+    jsonType Type() const { return val->type(); }
     //for obj
     Json &operator[](const std::string &key);
     Json &insert(const std::string &key, const Json &value);
@@ -44,8 +44,8 @@ public:
 
     //for arr
     Json &operator[](std::size_t i);
-    Json &insert(std::size_t, const Json &value);
-    Json &erase(std::size_t);
+    Json &insert(std::size_t i, const Json &value);
+    Json &erase(std::size_t i);
 
     //for string
     std::string &getStr();
@@ -62,6 +62,7 @@ public:
 
     Json &operator=(const Json &rhs);
 private:
+    //pimpl idiom
     std::shared_ptr<JsonVal> val;
 };
 
@@ -78,37 +79,9 @@ protected:
     virtual std::string &str_val();
     virtual double &num_val();
     virtual bool &bool_val();
-    virtual void put2arr(const Json &value);
-    virtual void put2Obj(const Json &value);
-    virtual ~JsonVal();
+    virtual void dump(std::string &res) const = 0;
+    virtual ~JsonVal() = default;
 };
-
-class JsonBool final: public JsonVal{
-    
-};
-
-class JsonNum final: public JsonVal{
-
-};
-
-class JsonStr final: public JsonVal{
-
-};
-
-class JsonNull final: public JsonVal{
-
-};
-
-class JsonArr final: public JsonVal{
-
-};
-
-class JsonObj final: public JsonVal {
-
-};
-
-
-
 
 }//namespace
 
