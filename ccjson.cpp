@@ -16,7 +16,10 @@ using std::fstream;
 using std::ostream;
 
 
-//黑洞类，吸收错误
+//黑洞类，吸收错误,单例模式
+class blackHole;
+static blackHole &BlackHole();
+
 class blackHole final{
 public:
     void clear() {
@@ -51,7 +54,6 @@ static blackHole &BlackHole(){
         bh = new blackHole();
     return *bh;
 }
-
 
 //====================接口JsonVal函数定义=========================
 Json & JsonVal::operator[](const std::string &key) {
@@ -129,7 +131,7 @@ private:
 
 class JsonNull final: public JsonVal{
 public:
-    explicit JsonNull();
+    explicit JsonNull() = default;
     Json::jsonType type() const override { return Json::NUL; }
     void dump(std::string &res) const override;
 private:
@@ -179,15 +181,18 @@ void JsonStr::dump(std::string &res) const {
 //构造函数
 Json::Json()                        :val(new JsonNull()) {}
 Json::Json(double value)            :val(new JsonNum(value)) {}
-Json::Json(const std::string &value):val(new JsonStr(value)) {}
+Json::Json(const std::string &value): val(new JsonStr(value)) { }
+Json::Json(const char *value)       :val(new JsonStr(string(value))){}
 Json::Json(bool value)              :val(new JsonBool(value)) {}
 Json::Json(const jsonArr &value)    :val(new JsonArr(value)) {}
 Json::Json(const jsonObj &value)    :val(new JsonObj(value)) {}
 
 
-
+Json::jsonType Json::Type() const { 
+    return val->type(); 
+}
 std::string Json::dump() {
-
+    return "";
 }
 
 //for obj,考虑下containkey?

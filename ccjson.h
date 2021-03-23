@@ -19,24 +19,25 @@ public:
     Json();                         //NULL
     Json(double value);             //NUM
     Json(const std::string &value); //string
+    Json(const char *value);        //string
     Json(bool value);               //bool
     Json(const jsonArr &value);     //array
     Json(const jsonObj &value);     //object
-
+    //Json(void *) = delete;//防止 Json a = "cdslfjsl",转换成bool类型
     //to string
     std::string dump();
 
     //judge
-    bool isObj() { return val->type() == OBJECT; }
-    bool isNum() { return val->type() == NUMBER; }
-    bool isArr() { return val->type() == ARRAY; }
-    bool isStr() { return val->type() == STRING; }
-    bool isNull() { return val->type() == NUL; }
-    bool isTrue() { return val->type() == TRUE; }
-    bool isFalse() { return val->type() == FALSE; }
+    bool isObj() { return Type() == OBJECT; }
+    bool isNum() { return Type() == NUMBER; }
+    bool isArr() { return Type() == ARRAY; }
+    bool isStr() { return Type() == STRING; }
+    bool isNull() { return Type() == NUL; }
+    bool isTrue() { return Type() == TRUE; }
+    bool isFalse() { return Type() == FALSE; }
 
     //access
-    jsonType Type() const { return val->type(); }
+    jsonType Type() const;
     //for obj
     Json &operator[](const std::string &key);
     Json &insert(const std::string &key, const Json &value);
