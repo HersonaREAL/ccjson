@@ -25,7 +25,7 @@ public:
     Json(const jsonObj &value);     //object
     //Json(void *) = delete;//防止 Json a = "cdslfjsl",转换成bool类型
     //to string
-    std::string dump();
+    std::string dump() const;
 
     //judge
     bool isObj() { return Type() == OBJECT; }
@@ -61,7 +61,7 @@ public:
 
 
 
-    Json &operator=(const Json &rhs);
+    //Json &operator=(const Json &rhs);
 private:
     //pimpl idiom
     std::shared_ptr<JsonVal> val;

@@ -11,8 +11,19 @@ int main(){
         {"ccd","sdkfjsdlfs"},
         {"ggd",1.123},
         {"sss",Json::jsonArr{1.2,2.3,"abc",true}},
-        {"empty",Json()}
+        {"empty",Json()},
+        {"JsonOBJ",Json::jsonArr{"testOBJBOJ","kcj"}}
     };
-    Json b = "cdefg";
-    cout << b.getStr() << endl;
+    Json b = Json::jsonObj{
+        {"abc", "cde"},
+        {"acc", false},
+        {"ccd","sdkfjsdlfs"},
+        {"ggd",1.123},
+        {"sss",Json::jsonArr{1.2,2.3,"abc",true,a}},
+        {"empty",Json()},
+        {"JsonOBJ",Json::jsonObj{
+            {"TESTARR",Json::jsonArr{3.33,6.666,Json(),"arrvalue"}}
+        }}
+    };
+    cout << b.dump() << endl;
 }

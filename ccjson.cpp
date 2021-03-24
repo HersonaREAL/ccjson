@@ -150,31 +150,49 @@ private:
 
 class JsonObj final: public JsonVal {
 public:
-    explicit JsonObj(const Json::jsonObj& value):val(value){}
+    explicit JsonObj(const Json::jsonObj &value) : val(value) {}
     Json::jsonType type() const override { return Json::OBJECT; }
     void dump(std::string &res) const override;
 private:
     Json::jsonObj val;
 };
 
+static void dumpStr(std::string &res,const std::string target){
+    res += "\"" + target + "\"";
+}
 
 void JsonObj::dump(std::string &res) const {
-
+    res +='{';
+    for (auto it = val.cbegin(); it != val.cend();++it){
+        dumpStr(res, it->first);
+        res += ':';
+        res += it->second.dump();
+        res += ',';
+    }
+    res.pop_back();
+    res += '}';
 }
 void JsonArr::dump(std::string &res) const {
-
+    res += '[';
+    for (std::size_t i = 0; i < val.size();++i){
+        res += val[i].dump();
+        res += ',';
+    }
+    res.pop_back();
+    res += ']';
 }
 void JsonNum::dump(std::string &res) const {
-
+    res += std::to_string(val);
 }
 void JsonBool::dump(std::string &res) const {
-
+    res += val ? "true" : "false";
 }
 void JsonNull::dump(std::string &res) const {
-
+    res += "null";
 }
 void JsonStr::dump(std::string &res) const {
-
+    //需添加转义
+    dumpStr(res, val);
 }
 
 //=============================JSON某些函数定义======================
@@ -191,8 +209,10 @@ Json::Json(const jsonObj &value)    :val(new JsonObj(value)) {}
 Json::jsonType Json::Type() const { 
     return val->type(); 
 }
-std::string Json::dump() {
-    return "";
+std::string Json::dump() const{
+    string res;
+    val->dump(res);
+    return res;
 }
 
 //for obj,考虑下containkey?
