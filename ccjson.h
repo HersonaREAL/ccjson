@@ -16,6 +16,7 @@ public:
 
     typedef std::vector<Json> jsonArr;
     typedef std::unordered_map<std::string, Json> jsonObj;
+    //考虑右值
     Json();                         //NULL
     Json(double value);             //NUM
     Json(const std::string &value); //string
@@ -62,6 +63,7 @@ public:
 
 
     //Json &operator=(const Json &rhs);
+
 private:
     //pimpl idiom
     std::shared_ptr<JsonVal> val;
@@ -71,17 +73,60 @@ class JsonVal {
 protected:
     friend class Json;
     virtual Json::jsonType type() const = 0;
+    //obj,考虑右值
     virtual Json &operator[](const std::string &key);
+    virtual void insert(const std::string &key, const Json &value);
+    virtual void erase(const std::string &key);
+    //arr,考虑右值
     virtual Json &operator[](std::size_t i);
-    virtual Json &insert(std::size_t, const Json &value);
-    virtual Json &erase(std::size_t);
-    virtual Json &insert(const std::string &key, const Json &value);
-    virtual Json &erase(const std::string &key);
+    virtual void insert(std::size_t i, const Json &value);
+    virtual void erase(std::size_t i);
+    //normal
     virtual std::string &str_val();
     virtual double &num_val();
     virtual bool &bool_val();
     virtual void dump(std::string &res) const = 0;
     virtual ~JsonVal() = default;
+};
+
+class JsonParser final {
+public:
+    enum err{
+        NOTHING,PARSE_OK,
+        PARSE_EXPECT_VALUE,
+        PARSE_INVALID_VALUE,
+        PARSE_ROOT_NOT_SINGULAR,
+        PARSE_NUMBER_TOO_BIG,
+        PARSE_MISS_QUOTATION_MARK,
+        PARSE_INVALID_STRING_ESCAPE,
+        PARSE_INVALID_STRING_CHAR,
+        PARSE_INVALID_UNICODE_HEX,
+        PARSE_INVALID_UNICODE_SURROGATE,
+        PARSE_MISS_COMMA_OR_SQUARE_BRACKET,
+        PARSE_MISS_KEY,
+        PARSE_MISS_COLON,
+        PARSE_MISS_COMMA_OR_CURLY_BRACKET
+    };
+
+    Json Parse(const string &c);
+    Json Parse(const string &c, string &errMsg);
+    err getStatusCode();
+    Json operator()(const string &c) { return Parse(c); }
+
+private:
+    Json Parse_Obj();
+    Json Parse_Arr();
+    Json Parse_Num();
+    Json Parse_Str();
+    Json Parse_Null();
+    Json Parse_Bool();
+    Json Parse_Val();
+    void Skip_Blank();
+    void Encoding_UTF8();
+    string getRawStr();
+    std::string context;
+    std::size_t pos;
+    err StatusCode = NOTHING;
 };
 
 }//namespace

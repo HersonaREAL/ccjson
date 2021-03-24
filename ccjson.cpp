@@ -64,21 +64,17 @@ Json & JsonVal::operator[](std::size_t i) {
     BlackHole().clear();
     return BlackHole().getJson();
 }
-Json & JsonVal::insert(std::size_t, const Json &value) {
-    BlackHole().clear();
-    return BlackHole().getJson();
+void JsonVal::insert(std::size_t, const Json &value) {
+
 }
-Json & JsonVal::erase(std::size_t) {
-    BlackHole().clear();
-    return BlackHole().getJson();
+void JsonVal::erase(std::size_t) {
+
 }
-Json & JsonVal::insert(const std::string &key, const Json &value) {
-    BlackHole().clear();
-    return BlackHole().getJson();
+void JsonVal::insert(const std::string &key, const Json &value) {
+
 }
-Json & JsonVal::erase(const std::string &key) {
-    BlackHole().clear();
-    return BlackHole().getJson();
+void JsonVal::erase(const std::string &key) {
+
 }
 std::string & JsonVal::str_val() {
     BlackHole().clear();
@@ -143,6 +139,9 @@ public:
     explicit JsonArr(const Json::jsonArr &value):val(value){}
     Json::jsonType type() const override { return Json::ARRAY; }
     void dump(std::string &res) const override;
+    Json &operator[](std::size_t i) override;
+    void insert(std::size_t i, const Json &value) override;
+    void erase(std::size_t i) override;
 private:
     Json::jsonArr val;
 };
@@ -153,10 +152,15 @@ public:
     explicit JsonObj(const Json::jsonObj &value) : val(value) {}
     Json::jsonType type() const override { return Json::OBJECT; }
     void dump(std::string &res) const override;
+    Json &operator[](const std::string &key) override;
+    void insert(const std::string &key, const Json &value) override;
+    void erase(const std::string &key) override;
 private:
     Json::jsonObj val;
 };
 
+
+//========================将Json解析成Json原文======================
 static void dumpStr(std::string &res,const std::string target){
     res += "\"" + target + "\"";
 }
@@ -195,6 +199,47 @@ void JsonStr::dump(std::string &res) const {
     dumpStr(res, val);
 }
 
+//============================访问成员函数==========================
+//arr
+Json &JsonArr::operator[](std::size_t i) {
+    if(i>=val.size()){
+        BlackHole().clear();
+        return BlackHole().getJson();
+    }
+    return val[i];
+}
+
+void JsonArr::insert(std::size_t i, const Json &value) {
+    if(i>=val.size())
+        val.push_back(value);
+    else
+        val.insert(val.begin()+i, value);
+}
+
+void JsonArr::erase(std::size_t i) {
+    if(i>=val.size())
+        val.pop_back();
+    else
+        val.erase(val.begin() + i);
+}
+
+//obj
+Json &JsonObj::operator[](const std::string &key) {
+    if(val.find(key)==val.end()){
+        BlackHole().clear();
+        return BlackHole().getJson();
+    }
+    return val[key];
+}
+
+void JsonObj::insert(const std::string &key, const Json &value) {
+    val[key] = value;
+}
+
+void JsonObj::erase(const std::string &key) {
+    val.erase(key);
+}
+
 //=============================JSON某些函数定义======================
 //构造函数
 Json::Json()                        :val(new JsonNull()) {}
@@ -221,15 +266,15 @@ Json &Json::operator[](const std::string &key) {
         return *this;
     return (*val)[key];
 }
+
 Json &Json::insert(const std::string &key, const Json &value) {
-    if(!isObj())
-        return *this;
-    return val->insert(key, value);
+    val->insert(key, value);
+    return *this;
 }
+
 Json &Json::erase(const std::string &key) {
-    if(!isObj())
-        return *this;
-    return val->erase(key);
+    val->erase(key);
+    return *this;
 }
 
 //for arr
@@ -238,15 +283,15 @@ Json &Json::operator[](std::size_t i) {
         return *this;
     return (*val)[i];
 }
+
 Json &Json::insert(std::size_t i , const Json &value) {
-    if(!isArr())
-        return *this;
-    return val->insert(i, value);
+    val->insert(i, value);
+    return *this;
 }
+
 Json &Json::erase(std::size_t i) {
-    if(!isArr())
-        return *this;
-    return val->erase(i);
+    val->erase(i);
+    return *this;
 }
 
 //for string
@@ -263,5 +308,12 @@ double &Json::getNum() {
 bool &Json::getBool() {
     return val->bool_val();
 }
+
+
+
+
+
+
+
 
 }//namespace

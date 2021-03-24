@@ -26,4 +26,26 @@ int main(){
         }}
     };
     cout << b.dump() << endl;
+    cout << b["ccd"].getStr() << endl;
+    cout << b["JsonOBJ"]["TESTARR"][1].getNum() << endl;
+    cout << b.insert("testInsert", "insertSuccess")["testInsert"].getStr() << endl;
+
+    cout << (b["acc"].Type()==Json::FALSE) << endl;
+    cout << b["testInsert"].getStr() << endl;
+    cout << b.insert("acc", "insertacc")["acc"].getStr() << endl;
+    cout << (b["acc"].Type() == Json::STRING) << endl;
+
+    cout << "b[\"sss\"].erase(4);" << endl;
+    b["sss"].erase(4);
+    cout << b.dump() << endl
+         << endl;
+
+    cout << "b.erase(\"sss\");" << endl;
+    b.erase("sss");
+    cout << b.dump() << endl
+         << endl;
+
+    cout << "b.erase(\"JsonOBJ\");" << endl;
+    b.erase("JsonOBJ");
+    cout << b.dump() << endl;
 }
