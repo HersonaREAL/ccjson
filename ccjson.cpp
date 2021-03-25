@@ -4,6 +4,7 @@
 #include<vector>
 #include<unordered_map>
 #include<memory>
+#include<cassert>
 
 #include"ccjson.h"
 
@@ -308,11 +309,6 @@ double &Json::getNum() {
 bool &Json::getBool() {
     return val->bool_val();
 }
-
-
-
-
-
 
 
 

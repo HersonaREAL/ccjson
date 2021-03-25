@@ -47,5 +47,12 @@ int main(){
 
     cout << "b.erase(\"JsonOBJ\");" << endl;
     b.erase("JsonOBJ");
-    cout << b.dump() << endl;
+    cout << b.dump() << endl<<endl;
+
+    JsonParser jp;
+    Json numj = jp.Parse("3.1415");
+    cout << (numj.Type() == Json::NUMBER ? "true" : "false") << endl;
+    cout << numj.Type() << endl;
+    cout << jp.getStatusCode() << endl;
+    cout << numj.getNum() << endl;
 }

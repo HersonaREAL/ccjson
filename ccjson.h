@@ -92,7 +92,8 @@ protected:
 class JsonParser final {
 public:
     enum err{
-        NOTHING,PARSE_OK,
+        NOTHING,
+        PARSE_OK,
         PARSE_EXPECT_VALUE,
         PARSE_INVALID_VALUE,
         PARSE_ROOT_NOT_SINGULAR,
@@ -108,10 +109,10 @@ public:
         PARSE_MISS_COMMA_OR_CURLY_BRACKET
     };
 
-    Json Parse(const string &c);
-    Json Parse(const string &c, string &errMsg);
-    err getStatusCode();
-    Json operator()(const string &c) { return Parse(c); }
+    Json Parse(const std::string &c) { std::string empty; return Parse(c,empty); }
+    Json Parse(const std::string &c, std::string &errMsg);
+    err getStatusCode() { return StatusCode; }
+    Json operator()(const std::string &c) { return Parse(c); }
 
 private:
     Json Parse_Obj();
@@ -122,8 +123,10 @@ private:
     Json Parse_Bool();
     Json Parse_Val();
     void Skip_Blank();
+    bool Is_Blank(char ch);
+    void fillErrMsg(std::string &err);
     void Encoding_UTF8();
-    string getRawStr();
+    std::string getRawStr();
     std::string context;
     std::size_t pos;
     err StatusCode = NOTHING;
