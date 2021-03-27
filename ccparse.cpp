@@ -43,11 +43,51 @@ Json JsonParser::Parse(const string &c, string &errMsg) {
 }
 
 Json JsonParser::Parse_Obj() {
+    assert(context[pos] == '{');
+    Json::jsonObj res;
+    string key;
+    ++pos;
+    Skip_Blank();
+    if(context[pos]=='}') {
+        ++pos;
+        StatusCode = PARSE_OK;
+        return Json(res);
+    }
+    while(1) {
+        Skip_Blank();
+        if(!getRawStr(key)) {
+            StatusCode = PARSE_MISS_KEY;
+            return Json();
+        }
+        Skip_Blank();
+        if(pos==context.size()||context[pos]!=':') {
+            StatusCode = PARSE_MISS_COLON;
+            return Json();
+        }
+        ++pos;
+        Skip_Blank();
+        res[key] = Parse_Val();
+        if(StatusCode!=PARSE_OK) {
+            break;
+        }
+        Skip_Blank();
+        if(pos!=context.size()&&context[pos]=='}') {
+            ++pos;
+            StatusCode = PARSE_OK;
+            return Json(res);
+        }
+        if(pos==context.size()||context[pos]!=',') {
+            StatusCode = PARSE_MISS_COMMA_OR_CURLY_BRACKET;
+            return Json();
+        }
+        ++pos;
+    }
+    StatusCode = PARSE_INVALID_VALUE;
     return Json();
 }
 
 Json JsonParser::Parse_Arr() {
-    assert("[");
+    assert(context[pos]=='[');
     Json::jsonArr res;
     ++pos;
     Skip_Blank();
@@ -187,7 +227,7 @@ static bool check(const string &src,int pos,doubleStutus *status){
 
 
 Json JsonParser::Parse_Num() {
-    assert(isdigit(context[pos])||context[pos]=='-');
+    assert(isdigit(context[pos]) || context[pos] == '-');
     doubleStutus status = DOUBLE_START;
     if(!check(context,pos,&status)) {
         if(context[pos]=='0'&&pos+1<context.size()&&context[pos+1]=='.'){
@@ -333,6 +373,11 @@ void JsonParser::Encoding_UTF8(unsigned &u,string &str) {
 
 bool JsonParser::getRawStr(string &str) {
     assert(context[pos] == '\"');
+    if(context[pos]!='\"') {
+        StatusCode = PARSE_INVALID_VALUE;
+        return false;
+    }
+    str.clear();
     ++pos;
     while(pos<context.size()) {
         char ch = context[pos++];

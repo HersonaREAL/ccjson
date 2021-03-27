@@ -178,7 +178,8 @@ void JsonObj::dump(std::string &res) const {
         res += it->second.dump();
         res += ',';
     }
-    res.pop_back();
+    if(res.back()==',')
+        res.pop_back();
     res += '}';
 }
 void JsonArr::dump(std::string &res) const {
@@ -187,7 +188,8 @@ void JsonArr::dump(std::string &res) const {
         res += val[i].dump();
         res += ',';
     }
-    res.pop_back();
+    if(res.back()==',')
+        res.pop_back();
     res += ']';
 }
 void JsonNum::dump(std::string &res) const {

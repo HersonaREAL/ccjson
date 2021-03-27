@@ -77,5 +77,10 @@ int main(){
     Json arr = jp.Parse("[ 1.23 ,[   ] ,[[[[[]]]]],5.56 , 50e-2,[[[[1]]]] ,true, false , null,[1.63, \"\\ud834\\udd1e \",[true,false,1.333] ]]");
     cout << (arr.Type() == Json::ARRAY ? "ARRAY" : "ERR") << endl;
     cout << jp.getStatusCode() << endl;
-    cout << arr.dump() << endl;
+    cout << arr.dump() << endl<<endl;
+
+    Json obj = jp.Parse("{\"arr1\"  : [ 1.23 ,[   ] ,{\"empty\" : {\"empty\" : {\"empty\" : {}}}},[[[[[]]]]],5.56 , 50e-2,[[[[1]]]] ,true, false , null,[1.63, \"\\ud834\\udd1e \",[true,false,1.333] ]] ,\"str1\" : \" i am a str\"}");
+    cout << (obj.Type() == Json::OBJECT ? "OBJECT" : "ERR") << endl;
+    cout << jp.getStatusCode() << endl;
+    cout << obj.dump() << endl;
 }
