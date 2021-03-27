@@ -87,6 +87,7 @@ protected:
     virtual bool &bool_val();
     virtual void dump(std::string &res) const = 0;
     virtual ~JsonVal() = default;
+    virtual std::size_t size() const;
 };
 
 class JsonParser final {
@@ -113,6 +114,7 @@ public:
     Json Parse(const std::string &c, std::string &errMsg);
     err getStatusCode() { return StatusCode; }
     Json operator()(const std::string &c) { return Parse(c); }
+    bool ParseOK() { return StatusCode == PARSE_OK; }
 
 private:
     Json Parse_Obj();
@@ -125,8 +127,9 @@ private:
     void Skip_Blank();
     bool Is_Blank(char ch);
     void fillErrMsg(std::string &err);
-    void Encoding_UTF8();
-    std::string getRawStr();
+    void Encoding_UTF8(unsigned &u,std::string &str);
+    bool getRawStr(std::string &str);
+    bool getHex(unsigned &u);
     std::string context;
     std::size_t pos;
     err StatusCode = NOTHING;

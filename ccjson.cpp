@@ -90,7 +90,7 @@ bool & JsonVal::bool_val() {
     return BlackHole().getBool();
 }
 
-
+std::size_t JsonVal::size() const { return 0; }
 
 //=======================继承JsonVal接口子类的定义======================
 class JsonBool final: public JsonVal{
@@ -121,6 +121,8 @@ public:
     Json::jsonType type() const override { return Json::STRING; }
     void dump(std::string &res) const override;
     string &str_val() override { return val; }
+    std::size_t size() const override { return val.size(); }
+
 private:
     string val;
 };
@@ -143,6 +145,7 @@ public:
     Json &operator[](std::size_t i) override;
     void insert(std::size_t i, const Json &value) override;
     void erase(std::size_t i) override;
+    std::size_t size() const override { return val.size(); }
 private:
     Json::jsonArr val;
 };
@@ -156,6 +159,7 @@ public:
     Json &operator[](const std::string &key) override;
     void insert(const std::string &key, const Json &value) override;
     void erase(const std::string &key) override;
+    std::size_t size() const override { return val.size(); }
 private:
     Json::jsonObj val;
 };
