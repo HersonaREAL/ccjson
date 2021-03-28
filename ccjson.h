@@ -115,7 +115,7 @@ public:
     err getStatusCode() { return StatusCode; }
     Json operator()(const std::string &c) { return Parse(c); }
     bool ParseOK() { return StatusCode == PARSE_OK; }
-
+    std::size_t getPos() { return pos; }
 private:
     Json Parse_Obj();
     Json Parse_Arr();
