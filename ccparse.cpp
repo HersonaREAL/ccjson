@@ -240,10 +240,6 @@ Json JsonParser::Parse_Num() {
         return Json();
     }
 
-    if(status==DOUBLE_ZERO&&pos+1<context.size()&&!isblank(context[pos+1])){
-        StatusCode = PARSE_ROOT_NOT_SINGULAR;
-        return Json();
-    }
     double num;
     char *end;
 
@@ -427,10 +423,10 @@ bool JsonParser::getRawStr(string &str) {
                     }
                 break;
             default:
-                if(ch<0x20) {
-                    StatusCode = PARSE_INVALID_STRING_CHAR;
-                    return false;
-                }
+                // if(ch<0x20) {
+                //     StatusCode = PARSE_INVALID_STRING_CHAR;
+                //     return false;
+                // }
                 //normal
                 str.push_back(ch);
             }

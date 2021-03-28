@@ -95,7 +95,7 @@ int main(){
     //     jp.Parse("{\"arr1\"  : [ 1.23 ,[ {\"BOOL\": true,\"bool2\" : false ,\"null\":null}  ] ,{\"empty\" : {\"empty\" : {\"empty\" : {}}}},[[[[[]]]]],5.56 , 50e-2,[[[[1]]]] ,true, false , null,[1.63, \"\\ud834\\udd1e \",[true,false,1.333] ]] ,\"str1\" : \" i am a str\"}");
     // clock_t end = clock();
     // cout<<"loop "<<count<<" times, " << "time spend : " << ((double)(end - start)/CLOCKS_PER_SEC)*1000 << " ms" << endl;
-    ifstream ifs("canada.json");
+    ifstream ifs("twitter.json");
     if(!ifs){
         cout << "fail";
         return -1;
@@ -103,12 +103,17 @@ int main(){
     stringstream ss;
     ss << ifs.rdbuf();
     string k = ss.str();
+    int cnt = 1;
     clock_t s = clock();
 
-    //for (int i = 0; i < 1000;++i)
+    for (int i = 0; i < cnt;++i)
         jp.Parse(k);
 
     clock_t e = clock();
+    cout << k.substr(0, jp.getPos()) << endl;
+    cout << ((jp.getStatusCode() == JsonParser::PARSE_OK) ? "parse ok" : "fail") << endl;
+    cout << jp.getStatusCode() << endl;
+    cout << jp.getPos() << endl;
     double spt = ((double)(e - s) / CLOCKS_PER_SEC);
-    cout << "speed: " << (2.14)/spt<<" MB/S" << endl;
+    cout << "speed: " << (0.616*cnt)/spt<<" MB/S" << endl;
 }

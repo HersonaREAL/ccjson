@@ -166,7 +166,7 @@ private:
 
 
 //========================将Json解析成Json原文======================
-static void dumpStr(std::string &res,const std::string target){
+static void dumpStr(std::string &res,const std::string& target){
     res += "\"" + target + "\"";
 }
 
