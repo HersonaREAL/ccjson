@@ -1,10 +1,12 @@
 #include<iostream>
 #include<fstream>
+#include<ctime>
 #include<string>
 #include<vector>
 #include<unordered_map>
 #include<memory>
 #include<cassert>
+#include<cmath>
 
 #include"ccjson.h"
 
@@ -38,7 +40,6 @@ Json JsonParser::Parse(const string &c, string &errMsg) {
         fillErrMsg(errMsg);
         return Json();
     }
-
     return ret;
 }
 
@@ -55,6 +56,7 @@ Json JsonParser::Parse_Obj() {
     }
     while(1) {
         Skip_Blank();
+        //std::cout<<pos<<std::endl;
         if(!getRawStr(key)) {
             StatusCode = PARSE_MISS_KEY;
             return Json();
@@ -242,19 +244,17 @@ Json JsonParser::Parse_Num() {
         StatusCode = PARSE_ROOT_NOT_SINGULAR;
         return Json();
     }
-    std::size_t end;
     double num;
-    try{
-        num = std::stod(context.substr(pos), &end);
-    }catch(std::out_of_range){
+    char *end;
+
+    num = strtod(&context[pos], &end);
+    if(errno==ERANGE&&num==HUGE_VAL) {
+        errno = 0;
         StatusCode = PARSE_NUMBER_TOO_BIG;
         return Json();
     }
-    catch (std::invalid_argument){
-        StatusCode = PARSE_EXPECT_VALUE;
-        return Json();
-    }
-    pos += end;
+
+    pos += end-&context[pos];
     StatusCode = PARSE_OK;
     return Json(num);
 }
@@ -325,7 +325,7 @@ Json JsonParser::Parse_Val() {
         case 'f':  return Parse_Bool();
         case 'n':  return Parse_Null();
         default:   return Parse_Num();
-        case '"':  return Parse_Str();
+        case '\"':  return Parse_Str();
         case '[':  return Parse_Arr();
         case '{':  return Parse_Obj();
     }
